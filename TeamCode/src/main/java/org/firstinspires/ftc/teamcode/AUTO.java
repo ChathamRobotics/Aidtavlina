@@ -403,16 +403,4 @@ public class AUTO {
             return orientation.getYaw(AngleUnit.DEGREES);
     }
     }
-    //would create the code to move forward to a specific outocme
-    private void movementforward(int forward){
-
-    }
-    //would be able to turn right by a specific degree (with testing)
-    private void turnright(int degree){
-
-    }
-    //would be able to turn left by a specific degree (with testing)
-    private void turnleft(int degree){
-
-    }
 }
