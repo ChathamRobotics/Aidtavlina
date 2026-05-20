@@ -111,6 +111,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
             telemetry.addLine("The left joystick sets the robot direction");
             telemetry.addLine("Moving the right joystick left and right turns the robot");
 
+            //ADDED
+            telemetry.addData("backRightDrive", frontRightDrive.getCurrentPosition());
+            telemetry.addData("backRightDrive", frontRightDrive.getCurrentPosition());
+
+
             // If you press the A button, then you reset the Yaw to be zero from the way
             // the robot is currently pointing
             if (gamepad1.a) {
