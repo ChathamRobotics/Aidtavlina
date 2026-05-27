@@ -183,12 +183,7 @@ public class AUTO {
             driveStraight(DRIVE_SPEED, 24.0, -90.0);  // Drive Forward 17" at -45 degrees (12"x and 12"y)
             turnToHeading( TURN_SPEED,  135.0);               // Turn  CCW  to  45 Degrees
             holdHeading( TURN_SPEED,  135.0, 1.0);    // Hold  45 Deg heading for a 1/2 second
-//
-//            driveStraight(DRIVE_SPEED, 17.0, 45.0);  // Drive Forward 17" at 45 degrees (-12"x and 12"y)
-//            turnToHeading( TURN_SPEED,   0.0);               // Turn  CW  to 0 Degrees
-//            holdHeading( TURN_SPEED,   0.0, 1.0);    // Hold  0 Deg heading for 1 second
-//
-//            driveStraight(DRIVE_SPEED,-48.0, 0.0);    // Drive in Reverse 48" (should return to approx. staring position)
+
 
             telemetry.addData("Path", "Complete");
             telemetry.update();
@@ -204,7 +199,7 @@ public class AUTO {
 
         // **********  HIGH Level driving functions.  ********************
 
-        /**
+        /*
          *  Drive in a straight line, on a fixed compass heading (angle), based on encoder counts.
          *  Move will stop if either of these conditions occur:
          *  1) Move gets to the desired position
@@ -216,6 +211,28 @@ public class AUTO {
          *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
          *                   If a relative angle is required, add/subtract from the current robotHeading.
          */
+        /**
+         *  Display the various control parameters while driving
+         *
+         * @param straight  Set to true if we are driving straight, and the encoder positions should be included in the telemetry.
+         */
+        private void sendTelemetry(boolean straight) {
+
+            if (straight) {
+                telemetry.addData("Motion", "Drive Straight");
+                telemetry.addData("Target Pos L:R",  "%7d:%7d",      frontLeftTarget,  frontRightTarget, backLeftTarget, backRightTarget);
+                telemetry.addData("Actual Pos L:R",  "%7d:%7d",
+                        frontRightDrive.getCurrentPosition(),
+                        backRightDrive.getCurrentPosition());
+            } else {
+                telemetry.addData("Motion", "Turning");
+            }
+
+            telemetry.addData("Heading- Target : Current", "%5.2f : %5.0f", targetHeading, getHeading());
+            telemetry.addData("Error  : Steer Pwr",  "%5.1f : %5.1f", headingError, turnSpeed);
+            telemetry.addData("Wheel Speeds L : R", "%5.2f : %5.2f", frontLeftSpeed, frontRightSpeed, backLeftSpeed, backRightSpeed);
+            telemetry.update();
+        }
         public void driveStraight(double maxDriveSpeed,
                                   double distance,
                                   double heading) {
@@ -231,11 +248,15 @@ public class AUTO {
                 backLeftTarget = backLeftDrive.getCurrentPosition() + moveCounts;
 
                 // Set Target FIRST, then turn on RUN_TO_POSITION
-                leftDrive.setTargetPosition(leftTarget);
-                rightDrive.setTargetPosition(rightTarget);
+                frontLeftDrive.setTargetPosition(frontLeftTarget);
+                frontRightDrive.setTargetPosition(frontRightTarget);
+                backLeftDrive.setTargetPosition(backLeftTarget);
+                backRightDrive.setTargetPosition(backRightTarget);
 
-                leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
                 // Set the required driving speed  (must be positive for RUN_TO_POSITION)
                 // Start driving straight, and then enter the control loop
@@ -244,7 +265,7 @@ public class AUTO {
 
                 // keep looping while we are still active, and BOTH motors are running.
                 while (opModeIsActive() &&
-                        (leftDrive.isBusy() && rightDrive.isBusy())) {
+                        (frontLeftDrive.isBusy() && frontRightDrive.isBusy() && backLeftDrive.isBusy() && backRightDrive.isBusy())) {
 
                     // Determine required steering to keep on heading
                     turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
@@ -344,6 +365,16 @@ public class AUTO {
             moveRobot(0, 0);
         }
 
+
+
+        /**
+         * read the Robot heading directly from the IMU (in degrees)
+         */
+        public double getHeading() {
+            YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+            return orientation.getYaw(AngleUnit.DEGREES);
+        }
+
         // **********  LOW Level driving functions.  ********************
 
         /**
@@ -353,6 +384,8 @@ public class AUTO {
          * @param proportionalGain      Gain factor applied to heading error to obtain turning power.
          * @return                      Turning power needed to get to required heading.
          */
+
+
         public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
             targetHeading = desiredHeading;  // Save for telemetry
 
@@ -389,46 +422,10 @@ public class AUTO {
                 frontLeftSpeed /= max;
                 frontRightSpeed /= max;
             }
-            double max2 = Math.max2(Math.abs(backLeftSpeed), Math.abs(backRightSpeed));
-            if (max2 > 1.0)
-            {
-                backLeftSpeed /= max;
-                backRightSpeed /= max;
-            }
 
             frontLeftDrive.setPower(leftSpeed);
             frontRightDrive.setPower(rightSpeed);
-        }
 
-        /**
-         *  Display the various control parameters while driving
-         *
-         * @param straight  Set to true if we are driving straight, and the encoder positions should be included in the telemetry.
-         */
-        private void sendTelemetry(boolean straight) {
-
-            if (straight) {
-                telemetry.addData("Motion", "Drive Straight");
-                telemetry.addData("Target Pos L:R",  "%7d:%7d",      frontLeftTarget,  frontRightTarget, backLeftTarget, backRightTarget);
-                telemetry.addData("Actual Pos L:R",  "%7d:%7d",
-                        frontRightDrive.getCurrentPosition(),
-                        backRightDrive.getCurrentPosition());
-            } else {
-                telemetry.addData("Motion", "Turning");
-            }
-
-            telemetry.addData("Heading- Target : Current", "%5.2f : %5.0f", targetHeading, getHeading());
-            telemetry.addData("Error  : Steer Pwr",  "%5.1f : %5.1f", headingError, turnSpeed);
-            telemetry.addData("Wheel Speeds L : R", "%5.2f : %5.2f", frontLeftSpeed, frontRightSpeed, backLeftSpeed, backRightSpeed);
-            telemetry.update();
-        }
-
-        /**
-         * read the Robot heading directly from the IMU (in degrees)
-         */
-        public double getHeading() {
-            YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-            return orientation.getYaw(AngleUnit.DEGREES);
     }
     }
 }
