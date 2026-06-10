@@ -253,6 +253,8 @@ public class AUTO extends LinearOpMode {
             moveRobot(0, 0);
             backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         }
     }
