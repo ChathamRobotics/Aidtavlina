@@ -112,9 +112,9 @@ public class AUTO extends LinearOpMode {
     static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable.
 
 
-    @Override
-    public void runOpMode() {
 
+    public void runOpMode() {
+        waitForStart();
         // Initialize the drive system variables.
         frontLeftDrive  = hardwareMap.get(DcMotor.class, "frontLeftDrive");
         frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightDrive");

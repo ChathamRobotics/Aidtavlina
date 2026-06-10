@@ -85,9 +85,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
             backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
             frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
 
-            // This uses RUN_USING_ENCODER to be more accurate.   If you don't have the encoder
-            // wires, you should remove these
-
             frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
