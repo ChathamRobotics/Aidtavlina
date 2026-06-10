@@ -62,7 +62,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 // * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
 // *
 // */
-    @TeleOp(name = "Robot: Field Relative Mecanum Drive", group = "Robot")
+    @TeleOp(name = "Aidtavlina TELEOP", group = "Robot")
     public class TELEOP extends OpMode{
         // This declares the four motors needed
         DcMotorEx frontLeftDrive;
@@ -75,10 +75,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
         @Override
         public void init() {
-            frontLeftDrive = hardwareMap.get(DcMotorEx.class, "front_left_drive");
-            frontRightDrive = hardwareMap.get(DcMotorEx.class, "front_right_drive");
-            backLeftDrive = hardwareMap.get(DcMotorEx.class, "back_left_drive");
-            backRightDrive = hardwareMap.get(DcMotorEx.class, "back_right_drive");
+            frontLeftDrive = hardwareMap.get(DcMotorEx.class, "frontLeftDrive");
+            frontRightDrive = hardwareMap.get(DcMotorEx.class, "frontRightDrive");
+            backLeftDrive = hardwareMap.get(DcMotorEx.class, "backLeftDrive");
+            backRightDrive = hardwareMap.get(DcMotorEx.class, "backRightDrive");
 
             // We set the left motors in reverse which is needed for drive trains where the left
             // motors are opposite to the right ones.
@@ -87,6 +87,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
             // This uses RUN_USING_ENCODER to be more accurate.   If you don't have the encoder
             // wires, you should remove these
+
             frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -97,7 +98,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
             RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
                     RevHubOrientationOnRobot.LogoFacingDirection.UP;
             RevHubOrientationOnRobot.UsbFacingDirection usbDirection =
-                    RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+                    RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
 
             RevHubOrientationOnRobot orientationOnRobot = new
                     RevHubOrientationOnRobot(logoDirection, usbDirection);
